@@ -44,12 +44,12 @@ async function _installBazelWithVersionForMac(
   baseInstallDir: string,
   version: string
 ) {
-  var tmpOutput = baseInstallDir + '/installer.sh';
+  var tmpOutput = 'bazel-installer.sh';
   var installerUrl = `https://github.com/bazelbuild/bazel/releases/download/${version}/bazel-${version}-installer-darwin-x86_64.sh`;
   await exec.exec(`curl -o ${tmpOutput} -fL ${installerUrl}`);
   if (fs.existsSync(tmpOutput)) {
     await exec.exec(`chmod +x ${tmpOutput}`);
-    await exec.exec(`${tmpOutput} --user`);
+    await exec.exec(`./${tmpOutput}`);
   } else {
     throw new Error(`cannot download bazel ${version}`);
   }
