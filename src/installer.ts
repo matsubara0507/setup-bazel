@@ -20,6 +20,7 @@ export function installBazelWithVersion(
       break;
     case 'darwin':
       _installBazelWithVersionForMac(baseInstallDir, version);
+      break;
     default:
       throw new Error(`unsupported OS: ${process.platform}`);
   }
