@@ -19,7 +19,10 @@ export function installBazelWithVersion(
       _installBazelWithVersionForLinux(baseInstallDir, version);
       break;
     case 'darwin':
-      _installBazelWithVersionForMac(baseInstallDir, version);
+      _installBazelWithVersionForMac(version);
+      break;
+    case 'win32':
+      _installBazelWithVersionForWindows(version);
       break;
     default:
       throw new Error(`unsupported OS: ${process.platform}`);
@@ -41,16 +44,25 @@ async function _installBazelWithVersionForLinux(
   }
 }
 
-async function _installBazelWithVersionForMac(
-  baseInstallDir: string,
-  version: string
-) {
+async function _installBazelWithVersionForMac(version: string) {
   var tmpOutput = 'bazel-installer.sh';
   var installerUrl = `https://github.com/bazelbuild/bazel/releases/download/${version}/bazel-${version}-installer-darwin-x86_64.sh`;
   await exec.exec(`curl -o ${tmpOutput} -fL ${installerUrl}`);
   if (fs.existsSync(tmpOutput)) {
     await exec.exec(`chmod +x ${tmpOutput}`);
     await exec.exec(`./${tmpOutput}`);
+  } else {
+    throw new Error(`cannot download bazel ${version}`);
+  }
+}
+
+async function _installBazelWithVersionForWindows(version: string) {
+  var outputDir = '/user/local/bin';
+  var output = outputDir + '/bazel';
+  var binUrl = `https://github.com/bazelbuild/bazel/releases/download/${version}/bazel-${version}-windows-x86_64.exe`;
+  await exec.exec(`wget -O ${output} -fL ${binUrl}`);
+  if (fs.existsSync(output)) {
+    core.addPath(outputDir);
   } else {
     throw new Error(`cannot download bazel ${version}`);
   }
