@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import {findBazelVersion} from './installer';
+import {installBazelWithVersion} from './installer';
 import {defaultVersion} from './default';
 
 // ghc and cabal are installed directly to /opt so use that directlly instead of
@@ -12,7 +12,7 @@ async function run() {
     if (!bazelVersion) {
       bazelVersion = defaultVersion;
     }
-    findBazelVersion(baseInstallDir, bazelVersion);
+    installBazelWithVersion(baseInstallDir, bazelVersion);
   } catch (error) {
     core.setFailed(error.message);
   }

@@ -3,7 +3,10 @@ import * as exec from '@actions/exec';
 import * as io from '@actions/io';
 import * as fs from 'fs';
 
-export function findBazelVersion(baseInstallDir: string, version: string) {
+export function installBazelWithVersion(
+  baseInstallDir: string,
+  version: string
+) {
   if (!baseInstallDir) {
     throw new Error('baseInstallDir parameter is required');
   }
@@ -13,14 +16,16 @@ export function findBazelVersion(baseInstallDir: string, version: string) {
 
   switch (process.platform) {
     case 'linux':
-      _findBazelVersionForLinux(baseInstallDir, version);
+      _installBazelWithVersionForLinux(baseInstallDir, version);
       break;
+    case 'darwin':
+      _installBazelWithVersionForMac(baseInstallDir, version);
     default:
       throw new Error(`unsupported OS: ${process.platform}`);
   }
 }
 
-async function _findBazelVersionForLinux(
+async function _installBazelWithVersionForLinux(
   baseInstallDir: string,
   version: string
 ) {
@@ -29,8 +34,23 @@ async function _findBazelVersionForLinux(
   await exec.exec(`wget -O ${tmpOutput} ${debUrl}`);
   if (fs.existsSync(tmpOutput)) {
     await exec.exec(`sudo dpkg -i ${tmpOutput}`);
+    await io.rmRF(tmpOutput);
   } else {
     throw new Error(`cannot download bazel ${version}`);
   }
-  await io.rmRF(tmpOutput);
+}
+
+async function _installBazelWithVersionForMac(
+  baseInstallDir: string,
+  version: string
+) {
+  var tmpOutput = baseInstallDir + '/installer.sh';
+  var installerUrl = `https://github.com/bazelbuild/bazel/releases/download/${version}/bazel_${version}-installer-darwin-x86_64.sh`;
+  await exec.exec(`curl -o ${tmpOutput} -fL ${installerUrl}`);
+  if (fs.existsSync(tmpOutput)) {
+    await exec.exec(`chmod +x ${tmpOutput}`);
+    await exec.exec(`${tmpOutput} --user`);
+  } else {
+    throw new Error(`cannot download bazel ${version}`);
+  }
 }
