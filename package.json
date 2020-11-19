@@ -1,0 +1,44 @@
+{
+  "name": "setup-bazel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "setup bazel action",
+  "main": "lib/setup-bazel.js",
+  "scripts": {
+    "build": "tsc",
+    "format": "prettier --write **/*.ts",
+    "format-check": "prettier --check **/*.ts",
+    "action": "node ./lib/setup-bazel.js",
+    "prune": "npm prune --production && git add --force node_modules && git commit -m \"Husky commit correct node modules\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matsubara0507/setup-bazel.git"
+  },
+  "keywords": [
+    "actions",
+    "bazel",
+    "setup"
+  ],
+  "author": "MATSUBARA Nobutada",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/exec": "^1.0.4",
+    "@actions/io": "^1.0.2",
+    "semver": "^7.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^12.19.2",
+    "@types/semver": "^6.2.2",
+    "husky": "^2.3.0",
+    "prettier": "^1.17.1",
+    "typescript": "^3.9.7"
+  },
+  "husky": {
+    "skipCI": true,
+    "hooks": {
+      "pre-commit": "npm run build && npm run format"
+    }
+  }
+}

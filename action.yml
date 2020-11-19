@@ -1,0 +1,10 @@
+name: 'Setup Bazel environment'
+description: 'Setup a Bazel environment and add it to the PATH'
+author: 'MATSUBARA Nobutada'
+inputs:
+  bazel-version:
+    description: 'Exact version of bazel to use.'
+    default: '3.7.0'
+runs:
+  using: 'node12'
+  main: 'lib/setup-bazel.js'
